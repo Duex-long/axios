@@ -52,6 +52,14 @@
         </select>
       </div>
       <div class="form-group">
+        <label for="adapter">adapter</label>
+        <select id="adapter" class="form-control">
+          <option value="xhr">XHR</option>
+          <option value="http">HTTP</option>
+          <option value="fetch">FETCH</option>
+        </select>
+      </div>
+      <div class="form-group">
         <label for="params">Params</label>
         <textarea id="params" class="form-control" placeholder='{"foo": "bar", "baz": 123.45}'></textarea>
       </div>
@@ -102,6 +110,7 @@
 
       var url = document.getElementById('url');
       var method = document.getElementById('method');
+      var adapter = document.getElementById('adapter');
       var params = document.getElementById('params');
       var data = document.getElementById('data');
       var headers = document.getElementById('headers');
@@ -109,6 +118,10 @@
       var request = document.getElementById('request');
       var response = document.getElementById('response');
       var error = document.getElementById('error');
+      // add interceptors
+      axios.interceptors.request.use((config) => {
+        console.log(config)
+      })
 
       function acceptsData(method) {
         return ['PATCH', 'POST', 'PUT'].indexOf(method) > -1;
@@ -158,11 +171,12 @@
           params: !acceptsData(method.value) ? getParams() : undefined,
           data: acceptsData(method.value) ? getData() : undefined,
           method: method.value,
-          headers: getHeaders()
+          headers: getHeaders(),
+          adapter:adapter.value
         };
 
         request.innerHTML = JSON.stringify(options, null, 2);
-
+        
         axios(options)
           .then(function (res) {
             response.innerHTML = JSON.stringify(res.data, null, 2);
